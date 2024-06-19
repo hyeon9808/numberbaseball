@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>숫자 야구 게임</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+    }
+    .input-container {
+        margin-bottom: 20px;
+    }
+</style>
+</head>
+<body>
+    <h1>숫자 야구 게임</h1>
+    <div class="input-container">
+        <label for="guessInput">3자리 숫자를 입력해주세요 : </label>
+        <input type="text" id="guessInput" maxlength="3" pattern="\d{3}" placeholder="범위: 0~9" required>
+        <button onclick="checkGuess()">입력</button>
+    </div>
+    <div id="result"></div>
+
+    <script>
+        let num;
+        let numArr = [];
+        let count = 0;
+
+        // 랜덤 숫자 생성
+        for (let i = 0; i < 3; i++) {
+            num = Math.floor(Math.random() * 10);
+            if (!(numArr.includes(num))) {
+                numArr.push(num);
+            } else {
+                i--;
+            }
+        }
+        console.log(numArr);  // 랜덤 숫자 확인
+
+        // strike, ball 개수 체크
+        function checkGuess() {
+            let input = document.getElementById('guessInput').value.trim();
+
+            if (!input || input.length !== 3 || !(/^\d{3}$/).test(input)) {
+                alert("유효한 3자리 숫자를 입력해주세요.");
+                return;
+            }
+
+            let guess = input.split('').map(Number); // 문자열을 숫자 배열로 변환
+            let [strike, ball] = check(numArr, guess);
+            displayResult(strike, ball);
+
+            count++;
+            console.log("count : " + count);
+            console.log("strike : " + strike);
+            console.log("ball : " + ball);
+
+            if (strike === 3) {
+                alert(`축하합니다! ${count}번째 시도에서 숫자를 맞추셨습니다.`);
+                location.reload();
+            }
+        }
+
+        function check(numArr, guess) {
+            let strike = 0;
+            let ball = 0;
+
+            for (let i = 0; i < numArr.length; i++) {
+                if (numArr[i] === guess[i]) {
+                    strike++;
+                } else if (numArr.includes(guess[i])) {
+                    ball++;
+                }
+            }
+
+            return [strike, ball];
+        }
+
+        function displayResult(strike, ball) {
+            let resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<p>스트라이크: ${strike}, 볼: ${ball}</p>`;
+        }
+    </script>
+</body>
+</html>
